@@ -30,12 +30,12 @@ int main()
         cout << "| 11.Vector x Matrix nxn     | 11_multiply_vector_n.cpp   |" << endl;
         cout << "| 12.Matrix x Matrix nxn     | 12_multiply_matrix_n.cpp   |" << endl;
         cout << "| 13. test 25.01.10.         | 13_test.cpp                |" << endl;
-        cout << "| 14. 10Â÷´ÙÇ×½Ä 01.13.      | 14_test1.cpp               |" << endl;
-        cout << "| 15. 4Â÷´ÙÇ×½Ä 01.17.       | 15_TEST_4th.cpp            |" << endl;
-        cout << "| 16. 10Â÷´ÙÇ×½Ä 01.20.      | 16_TEST_10th.cpp           |" << endl;
-        cout << "| 17. 17ÄÚµå.                | 17_test.cpp                |" << endl;
-        cout << "| 18. 18ÄÚµå.                | 18_test.cpp                |" << endl;
-        cout << "| 19. 19ÄÚµå.                | 19_test.cpp                |" << endl;
+        cout << "| 14. 10ì°¨ë‹¤í•­ì‹ 01.13.      | 14_test1.cpp               |" << endl;
+        cout << "| 15. 4ì°¨ë‹¤í•­ì‹ 01.17.       | 15_TEST_4th.cpp            |" << endl;
+        cout << "| 16. 10ì°¨ë‹¤í•­ì‹ 01.20.      | 16_TEST_10th.cpp           |" << endl;
+        cout << "| 17. 17ì½”ë“œ.                | 17_test.cpp                |" << endl;
+        cout << "| 18. 18ì½”ë“œ.                | 18_test.cpp                |" << endl;
+        cout << "| 19. 19ì½”ë“œ.                | 19_test.cpp                |" << endl;
         cout << "+----------------------------+----------------------------+" << endl;
 
         /*
