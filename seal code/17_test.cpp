@@ -41,7 +41,7 @@ void evaluate_polynomial_17()
     print_vector(input, 3, 7);
 
     int degree;
-    cout << "¸î Â÷ ´ÙÇ×½ÄÀ» Æò°¡ÇÏ°Ú½À´Ï±î? ";
+    cout << "ëª‡ ì°¨ ë‹¤í•­ì‹ì„ í‰ê°€í•˜ê² ìŠµë‹ˆê¹Œ? ";
     cin >> degree;
 
     vector<Plaintext> plain_coeffs(degree + 1);
