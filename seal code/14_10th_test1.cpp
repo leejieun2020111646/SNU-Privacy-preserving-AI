@@ -7,21 +7,21 @@ void evaluate_polynomial()
 {
     print_example_banner("Example: CKKS Basics (4th Degree Polynomial)");
 
-    // CKKS ÆÄ¶ó¹ÌÅÍ ¼³Á¤
+    // CKKS íŒŒë¼ë¯¸í„° ì„¤ì •
     size_t poly_modulus_degree = 16384;
     EncryptionParameters parms(scheme_type::ckks);
     parms.set_poly_modulus_degree(poly_modulus_degree);
-    // ÃÑ 200ºñÆ®ÀÇ coeff_modulus (60, 40, 40, 60) »ç¿ë
+    // ì´ 200ë¹„íŠ¸ì˜ coeff_modulus (60, 40, 40, 60) ì‚¬ìš©
     parms.set_coeff_modulus(CoeffModulus::Create(poly_modulus_degree, { 60, 40, 40, 40, 60 }));
 
-    // ÃÊ±â ½ºÄÉÀÏÀ» 2^40·Î ¼³Á¤
+    // ì´ˆê¸° ìŠ¤ì¼€ì¼ì„ 2^40ë¡œ ì„¤ì •
     double scale = pow(2.0, 40);
 
     SEALContext context(parms);
     print_parameters(context);
     cout << endl;
 
-    // Å° »ı¼º: ºñ¹ĞÅ°, °ø°³Å°, relinearization ¹× Galois Å° »ı¼º
+    // í‚¤ ìƒì„±: ë¹„ë°€í‚¤, ê³µê°œí‚¤, relinearization ë° Galois í‚¤ ìƒì„±
     KeyGenerator keygen(context);
     auto secret_key = keygen.secret_key();
     PublicKey public_key;
@@ -34,12 +34,12 @@ void evaluate_polynomial()
     Evaluator evaluator(context);
     Decryptor decryptor(context, secret_key);
 
-    // CKKS ÀÎÄÚ´õ »ı¼º ¹× ½½·Ô °³¼ö È®ÀÎ
+    // CKKS ì¸ì½”ë” ìƒì„± ë° ìŠ¬ë¡¯ ê°œìˆ˜ í™•ì¸
     CKKSEncoder encoder(context);
     size_t slot_count = encoder.slot_count();
     cout << "Number of slots: " << slot_count << endl;
 
-    // [0,1] ±¸°£ÀÇ Á¡µéÀ» ÀÔ·Â º¤ÅÍ·Î ±¸¼º
+    // [0,1] êµ¬ê°„ì˜ ì ë“¤ì„ ì…ë ¥ ë²¡í„°ë¡œ êµ¬ì„±
     vector<double> input;
     input.reserve(slot_count);
     double curr_point = 0;
@@ -85,14 +85,14 @@ void evaluate_polynomial()
     evaluator.relinearize_inplace(x4_encrypted, relin_keys);
     cout << "    + Scale of x^4 before rescale: " << log2(x4_encrypted.scale()) << " bits" << endl;
 
-    // rescale: x4_encryptedÀÇ ½ºÄÉÀÏ Á¶Á¤
+    // rescale: x4_encryptedì˜ ìŠ¤ì¼€ì¼ ì¡°ì •
     print_line(__LINE__);
     cout << "Rescale x^4." << endl;
     evaluator.rescale_to_next_inplace(x4_encrypted);
-    //Ãß°¡
+    //ì¶”ê°€
     cout << "    + Scale of x^4 after rescale: " << log2(x4_encrypted.scale()) << " bits" << endl;
 
-    // Ç×1: PI * x^4
+    // í•­1: PI * x^4
     print_line(__LINE__);
     cout << "LOG TEST1" << endl;
     cout << "Compute and rescale PI * x^4." << endl;
@@ -105,10 +105,10 @@ void evaluate_polynomial()
     cout << "    + Scale of PI*x^4 before rescale: " << log2(term1.scale()) << " bits" << endl;
     evaluator.rescale_to_next_inplace(term1);
     cout << "    + Scale of PI*x^4 after rescale: " << log2(term1.scale()) << " bits" << endl;
-    cout << "[parms_id] Ç×1: PI * x^4 plain_coeff_pi : "
+    cout << "[parms_id] í•­1: PI * x^4 plain_coeff_pi : "
          << context.get_context_data(plain_coeff_pi.parms_id())->chain_index() << endl;
-    cout << "[parms_id] Ç×1: PI * x^4 x4_encrypted : " << context.get_context_data(x4_encrypted.parms_id())->chain_index() << endl;
-    // Ç×2: 0.4 * x^2
+    cout << "[parms_id] í•­1: PI * x^4 x4_encrypted : " << context.get_context_data(x4_encrypted.parms_id())->chain_index() << endl;
+    // í•­2: 0.4 * x^2
     print_line(__LINE__);
     cout << "Compute and rescale 0.4 * x^2." << endl;
     Ciphertext term2;
@@ -142,14 +142,14 @@ void evaluate_polynomial()
     for (size_t i = 0; i < input.size(); i++)
     {
         double x = input[i];
-        // °è»ê: PI*x^4 + 0.4*x^2 + 1
+        // ê³„ì‚°: PI*x^4 + 0.4*x^2 + 1
         true_result.push_back(3.14159265 * x * x * x * x + 0.4 * x * x + 1);
     }
     print_vector(true_result, 3, 7);
     cout << "LOG TEST" << endl;
 
     /*
-    ¾ÏÈ£¹®À» º¹È£È­ÇÏ°í °á°ú¸¦ µğÄÚµùÇÏ¿© Ãâ·Â
+    ì•”í˜¸ë¬¸ì„ ë³µí˜¸í™”í•˜ê³  ê²°ê³¼ë¥¼ ë””ì½”ë”©í•˜ì—¬ ì¶œë ¥
     */
     decryptor.decrypt(encrypted_result, plain_result);
     vector<double> result;
