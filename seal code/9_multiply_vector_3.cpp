@@ -1,4 +1,4 @@
-#include <iomanip> //Ãâ·Â Æ÷¸Ë Á¶Á¤ À§ÇÑ Çì´õ
+#include <iomanip> //ì¶œë ¥ í¬ë§· ì¡°ì • ìœ„í•œ í—¤ë”
 #include "examples.h"
 
 using namespace seal;
@@ -6,7 +6,7 @@ using namespace std;
 
 void example_multiply_vector_matrix_3()
 {
-    // º¤ÅÍ ³»¿ë Ãâ·Â À§ÇÑ ¶÷´ÙÇÔ¼ö
+    // ë²¡í„° ë‚´ìš© ì¶œë ¥ ìœ„í•œ ëŒë‹¤í•¨ìˆ˜
     auto print_vector = [](string title, const vector<double> &vec, size_t print_size) {
         cout << title << ": ";
         for (size_t i = 0; i < print_size && i < vec.size(); i++)
@@ -15,8 +15,8 @@ void example_multiply_vector_matrix_3()
         }
         cout << endl;
     };
-    // ¾ÏÈ£È­ ÆÄ¶ó¹ÌÅÍ ¼³Á¤
-    EncryptionParameters parms(scheme_type::ckks); // CKKS »ç¿ë
+    // ì•”í˜¸í™” íŒŒë¼ë¯¸í„° ì„¤ì •
+    EncryptionParameters parms(scheme_type::ckks); // CKKS ì‚¬ìš©
     size_t poly_modulus_degree = 8192;
     parms.set_poly_modulus_degree(poly_modulus_degree);
     parms.set_coeff_modulus(CoeffModulus::Create(poly_modulus_degree, { 60, 40, 40, 60 }));
@@ -24,7 +24,7 @@ void example_multiply_vector_matrix_3()
     SEALContext context(parms);
     print_parameters(context);
 
-    // Å° »ı¼º
+    // í‚¤ ìƒì„±
     KeyGenerator keygen(context);
     SecretKey secret_key = keygen.secret_key();
     PublicKey public_key;
@@ -32,81 +32,81 @@ void example_multiply_vector_matrix_3()
     RelinKeys relin_keys;
     keygen.create_relin_keys(relin_keys);
     GaloisKeys galois_keys;
-    keygen.create_galois_keys(galois_keys); // rotation À§ÇÑ Galois Å° »ı¼º
+    keygen.create_galois_keys(galois_keys); // rotation ìœ„í•œ Galois í‚¤ ìƒì„±
 
     Encryptor encryptor(context, public_key);
-    Evaluator evaluator(context); // Æò°¡ °´Ã¼(µ¿Çü ¿¬»ê ¼öÇà)
+    Evaluator evaluator(context); // í‰ê°€ ê°ì²´(ë™í˜• ì—°ì‚° ìˆ˜í–‰)
     Decryptor decryptor(context, secret_key);
     CKKSEncoder encoder(context);
 
     double scale = pow(2.0, 40);
-    size_t slot_count = encoder.slot_count(); // »ç¿ë °¡´ÉÇÑ ½½·Ô °³¼ö È®ÀÎ
-    size_t vector_size = 3; // ÀÔ·Âº¤ÅÍ ¹× Çà·Ä Å©±â
+    size_t slot_count = encoder.slot_count(); // ì‚¬ìš© ê°€ëŠ¥í•œ ìŠ¬ë¡¯ ê°œìˆ˜ í™•ì¸
+    size_t vector_size = 3; // ì…ë ¥ë²¡í„° ë° í–‰ë ¬ í¬ê¸°
 
     vector<double> input_vector = { 1.0, 2.0, 3.0};
     vector<vector<double>> matrix = {
         { 1.0, 2.0, 3.0}, { 5.0, 6.0, 7.0}, { 9.0, 10.0, 11.0}
     };
 
-    // ÀÔ·Â º¤ÅÍ¸¦ CKKS ½½·Ô Å©±â¿¡ ¸Â°Ô È®Àå
+    // ì…ë ¥ ë²¡í„°ë¥¼ CKKS ìŠ¬ë¡¯ í¬ê¸°ì— ë§ê²Œ í™•ì¥
     vector<double> input_vector_extended = input_vector;
-    // ³²Àº ½½·ÔÀº 0À¸·Î Ã¤¿òvector
+    // ë‚¨ì€ ìŠ¬ë¡¯ì€ 0ìœ¼ë¡œ ì±„ì›€vector
     input_vector_extended.resize(slot_count, 0.0);
 
-    // ÀÔ·Â º¤ÅÍ¸¦ Æò¹®À¸·Î ÀÎÄÚµù
+    // ì…ë ¥ ë²¡í„°ë¥¼ í‰ë¬¸ìœ¼ë¡œ ì¸ì½”ë”©
     Plaintext plain_vector;
     encoder.encode(input_vector_extended, scale, plain_vector);
 
-    // ÀÔ·Â º¤ÅÍ ¾ÏÈ£È­
+    // ì…ë ¥ ë²¡í„° ì•”í˜¸í™”
     Ciphertext encrypted_vector;
     encryptor.encrypt(plain_vector, encrypted_vector);
 
-    // °á°ú ÀúÀå¿ë º¤ÅÍ
+    // ê²°ê³¼ ì €ì¥ìš© ë²¡í„°
     vector<Ciphertext> row_results;
 
-    // °¢ Çà¿¡ ´ëÇØ ¿¬»ê ¼öÇà
+    // ê° í–‰ì— ëŒ€í•´ ì—°ì‚° ìˆ˜í–‰
     for (size_t i = 0; i < vector_size; i++)
     {
-        vector<double> row = matrix[i]; // ÇöÀç Çà ÃßÃâ
-        row.resize(slot_count, 0.0); // ½½·Ô Å©±â¿¡ ¸Â°Ô È®Àå
+        vector<double> row = matrix[i]; // í˜„ì¬ í–‰ ì¶”ì¶œ
+        row.resize(slot_count, 0.0); // ìŠ¬ë¡¯ í¬ê¸°ì— ë§ê²Œ í™•ì¥
 
-        // ÇàÀ» Æò¹®À¸·Î ÀÎÄÚµù
+        // í–‰ì„ í‰ë¬¸ìœ¼ë¡œ ì¸ì½”ë”©
         Plaintext plain_row;
         encoder.encode(row, scale, plain_row);
-        // Çà ¾ÏÈ£È­
+        // í–‰ ì•”í˜¸í™”
         Ciphertext encrypted_row;
         encryptor.encrypt(plain_row, encrypted_row);
-        // ÀÔ·Â º¤ÅÍ¿Í ÇöÀç ÇàÀÇ °ö °è»ê
+        // ì…ë ¥ ë²¡í„°ì™€ í˜„ì¬ í–‰ì˜ ê³± ê³„ì‚°
         Ciphertext temp;
         evaluator.multiply_plain(encrypted_vector, plain_row, temp);
-        evaluator.rescale_to_next_inplace(temp); // °ö¼À ÈÄ ¸®½ºÄÉÀÏ¸µ
+        evaluator.rescale_to_next_inplace(temp); // ê³±ì…ˆ í›„ ë¦¬ìŠ¤ì¼€ì¼ë§
 
-        // ½ºÄÉÀÏ Àç¼³Á¤
+        // ìŠ¤ì¼€ì¼ ì¬ì„¤ì •
         temp.scale() = scale;
 
-        // È¸Àü °á°ú ´©Àû ÇÕ»ê
+        // íšŒì „ ê²°ê³¼ ëˆ„ì  í•©ì‚°
         Ciphertext sum = temp;
         for (size_t rot = 1; rot < vector_size; rot++)
         {
             Ciphertext rotated;
-            evaluator.rotate_vector(temp, rot, galois_keys, rotated); // º¤ÅÍ È¸Àü
-            evaluator.add_inplace(sum, rotated); // ´©Àû ÇÕ»ê
+            evaluator.rotate_vector(temp, rot, galois_keys, rotated); // ë²¡í„° íšŒì „
+            evaluator.add_inplace(sum, rotated); // ëˆ„ì  í•©ì‚°
         }
 
-        row_results.push_back(sum); // ÇöÀç ÇàÀÇ È¸Àü °á°ú ÀúÀå
+        row_results.push_back(sum); // í˜„ì¬ í–‰ì˜ íšŒì „ ê²°ê³¼ ì €ì¥
     }
 
-    // ÃÖÁ¾ °á°ú Ãâ·Â
+    // ìµœì¢… ê²°ê³¼ ì¶œë ¥
     cout << "\\nFinal Results:" << endl;
     for (size_t i = 0; i < row_results.size(); i++)
     {
-        // °á°ú º¹È£È­
+        // ê²°ê³¼ ë³µí˜¸í™”
         Plaintext decrypted_result;
         decryptor.decrypt(row_results[i], decrypted_result);
         vector<double> decoded_result;
-        encoder.decode(decrypted_result, decoded_result); // º¹È£È­µÈ °ª µğÄÚµù
+        encoder.decode(decrypted_result, decoded_result); // ë³µí˜¸í™”ëœ ê°’ ë””ì½”ë”©
 
-        // ±âÁ¸ÀÇ Ãâ·ÂµÇ¾î¾ß ÇÒ ³»Àû °ª °è»ê
+        // ê¸°ì¡´ì˜ ì¶œë ¥ë˜ì–´ì•¼ í•  ë‚´ì  ê°’ ê³„ì‚°
         double expected = 0.0;
         for (size_t j = 0; j < vector_size; j++)
         {
