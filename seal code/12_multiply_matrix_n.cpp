@@ -6,7 +6,7 @@ using namespace std;
 
 void example_multiply_matrix_matrix_dynamic()
 {
-    // º¤ÅÍ Ãâ·Â ½Ã Á¤·Ä
+    // ë²¡í„° ì¶œë ¥ ì‹œ ì •ë ¬
     auto print_matrix = [](string title, const vector<vector<double>> &matrix) {
         cout << title << ":" << endl;
         for (const auto &row : matrix)
@@ -19,27 +19,27 @@ void example_multiply_matrix_matrix_dynamic()
         }
     };
 
-    // Çà·Ä Å©±â ÀÔ·Â¹ŞÀ½: (NxM) * (MxK) ²Ã
+    // í–‰ë ¬ í¬ê¸° ì…ë ¥ë°›ìŒ: (NxM) * (MxK) ê¼´
     size_t N, M, K;
     cout << "Enter the dimensions (N, M, K) for matrix multiplication (NxM) * (MxK): ";
     cin >> N >> M >> K;
 
-    // ¾ÏÈ£È­ ÆÄ¶ó¹ÌÅÍ ¼³Á¤
+    // ì•”í˜¸í™” íŒŒë¼ë¯¸í„° ì„¤ì •
     EncryptionParameters parms(scheme_type::ckks);
-    size_t poly_modulus_degree = 8192; // ½½·Ô Å©±â ¼³Á¤
+    size_t poly_modulus_degree = 8192; // ìŠ¬ë¡¯ í¬ê¸° ì„¤ì •
     parms.set_poly_modulus_degree(poly_modulus_degree);
     parms.set_coeff_modulus(CoeffModulus::Create(poly_modulus_degree, { 60, 40, 40, 60 }));
 
     SEALContext context(parms);
 
-    // (ÆÄ¶ó¹ÌÅÍ À¯È¿¼º °Ë»ç Ãß°¡)
+    // (íŒŒë¼ë¯¸í„° ìœ íš¨ì„± ê²€ì‚¬ ì¶”ê°€)
     if (!context.parameters_set())
     {
         cout << "Invalid encryption parameters!" << endl;
         return;
     }
 
-    // Å° »ı¼º
+    // í‚¤ ìƒì„±
     KeyGenerator keygen(context);
     SecretKey secret_key = keygen.secret_key();
     PublicKey public_key;
@@ -47,7 +47,7 @@ void example_multiply_matrix_matrix_dynamic()
     RelinKeys relin_keys;
     keygen.create_relin_keys(relin_keys);
 
-    // GaloisKeys »ı¼º
+    // GaloisKeys ìƒì„±
     GaloisKeys galois_keys;
     keygen.create_galois_keys(galois_keys);
 
@@ -56,11 +56,11 @@ void example_multiply_matrix_matrix_dynamic()
     Decryptor decryptor(context, secret_key);
     CKKSEncoder encoder(context);
 
-    // ½ºÄÉÀÏ ¹× ½½·Ô Å©±â ¼³Á¤
+    // ìŠ¤ì¼€ì¼ ë° ìŠ¬ë¡¯ í¬ê¸° ì„¤ì •
     double scale = pow(2.0, 40);
     size_t slot_count = encoder.slot_count();
 
-    // Çà·Ä1 (NxM) ÃÊ±âÈ­(1.0 ~ °ª Ã¤¿ò)
+    // í–‰ë ¬1 (NxM) ì´ˆê¸°í™”(1.0 ~ ê°’ ì±„ì›€)
     vector<vector<double>> matrix_A(N, vector<double>(M, 0.0));
     for (size_t i = 0; i < N; i++)
     {
@@ -70,7 +70,7 @@ void example_multiply_matrix_matrix_dynamic()
         }
     }
 
-    // Çà·Ä2 (MxK) ÃÊ±âÈ­
+    // í–‰ë ¬2 (MxK) ì´ˆê¸°í™”
     vector<vector<double>> matrix_B(M, vector<double>(K, 0.0));
     for (size_t i = 0; i < M; i++)
     {
@@ -83,25 +83,25 @@ void example_multiply_matrix_matrix_dynamic()
     print_matrix("Matrix A", matrix_A);
     print_matrix("Matrix B", matrix_B);
 
-    // Çà·Ä 1ÀÇ °¢ Çà ¾ÏÈ£È­
+    // í–‰ë ¬ 1ì˜ ê° í–‰ ì•”í˜¸í™”
     vector<Ciphertext> encrypted_matrix_A(N);
     for (size_t i = 0; i < N; i++)
     {
         vector<double> row(slot_count, 0.0);
-        copy(matrix_A[i].begin(), matrix_A[i].end(), row.begin()); // ÇàÀ» ½½·Ô¿¡ º¹»çÇØµÒ
+        copy(matrix_A[i].begin(), matrix_A[i].end(), row.begin()); // í–‰ì„ ìŠ¬ë¡¯ì— ë³µì‚¬í•´ë‘ 
         Plaintext plain_row;
         encoder.encode(row, scale, plain_row);
-        encryptor.encrypt(plain_row, encrypted_matrix_A[i]); // ¾ÏÈ£È­ ÈÄ ÀúÀå
+        encryptor.encrypt(plain_row, encrypted_matrix_A[i]); // ì•”í˜¸í™” í›„ ì €ì¥
     }
 
-    // Çà·Ä2 °¢ ¿­À» ¾ÏÈ£È­
+    // í–‰ë ¬2 ê° ì—´ì„ ì•”í˜¸í™”
     vector<Ciphertext> encrypted_matrix_B(K);
     for (size_t j = 0; j < K; j++)
     {
         vector<double> col(slot_count, 0.0);
         for (size_t i = 0; i < M; i++)
         {
-            col[i] = matrix_B[i][j]; // ¿­À» ½½·Ô¿¡ º¹»ç
+            col[i] = matrix_B[i][j]; // ì—´ì„ ìŠ¬ë¡¯ì— ë³µì‚¬
         }
         Plaintext plain_col;
         encoder.encode(col, scale, plain_col);
@@ -116,22 +116,22 @@ void example_multiply_matrix_matrix_dynamic()
              << ", size = " << encrypted_matrix_B[j].size() << endl;
     }
 
-    // °á°ú Çà·Ä (NxK) ÃÊ±âÈ­
+    // ê²°ê³¼ í–‰ë ¬ (NxK) ì´ˆê¸°í™”
     vector<vector<double>> result_matrix(N, vector<double>(K, 0.0));
 
-    // Çà·Ä °ö¼À ¼öÇà
+    // í–‰ë ¬ ê³±ì…ˆ ìˆ˜í–‰
     for (size_t i = 0; i < N; i++)
     {
         for (size_t j = 0; j < K; j++)
         {
-            // Çà·Ä1ÀÇ i¹øÂ° Çà°ú Çà·Ä2ÀÇ j¹øÂ° ¿­ÀÇ ³»Àû °è»ê
+            // í–‰ë ¬1ì˜ ië²ˆì§¸ í–‰ê³¼ í–‰ë ¬2ì˜ jë²ˆì§¸ ì—´ì˜ ë‚´ì  ê³„ì‚°
             Ciphertext dot_product;
             evaluator.multiply(encrypted_matrix_A[i], encrypted_matrix_B[j], dot_product);
 
             evaluator.relinearize_inplace(dot_product, relin_keys);
             evaluator.rescale_to_next_inplace(dot_product);
 
-            // rotation ¹× ÇÕ»ê
+            // rotation ë° í•©ì‚°
             Ciphertext sum = dot_product;
             for (size_t rot = 1; rot < M; rot++)
             {
@@ -140,38 +140,38 @@ void example_multiply_matrix_matrix_dynamic()
                 evaluator.add_inplace(sum, rotated);
             }
 
-            // º¹È£È­ ¹× µğÄÚµù
+            // ë³µí˜¸í™” ë° ë””ì½”ë”©
             Plaintext plain_result;
             decryptor.decrypt(sum, plain_result);
             vector<double> decoded_result;
             encoder.decode(plain_result, decoded_result);
 
-            // °á°ú ÀúÀå
+            // ê²°ê³¼ ì €ì¥
             result_matrix[i][j] = decoded_result[0];
 
-            // ¿ø·¡ ¿¬»ê °ª °è»ê
+            // ì›ë˜ ì—°ì‚° ê°’ ê³„ì‚°
             double expected = 0.0;
             for (size_t k = 0; k < M; k++)
             {
                 expected += matrix_A[i][k] * matrix_B[k][j];
             }
 
-            // ¿ÀÂ÷ °è»ê
+            // ì˜¤ì°¨ ê³„ì‚°
             double absolute_error = fabs(decoded_result[0] - expected);
             double relative_error = (expected != 0.0) ? fabs(absolute_error / expected) : 0.0;
 
-            // °á°ú Ãâ·Â
+            // ê²°ê³¼ ì¶œë ¥
             cout << fixed << setprecision(20);
             cout << "Result[" << i << "][" << j << "]:" << endl;
             cout << "  Encrypted result (decoded): " << decoded_result[0] << endl;
             cout << "  Expected result: " << expected << endl;
-            cout << "  ¿ÀÂ÷: " << absolute_error << endl;
+            cout << "  ì˜¤ì°¨: " << absolute_error << endl;
             
         }
     }
 
 
-    // ÃÖÁ¾ °á°ú Çà·Ä Ãâ·Â
+    // ìµœì¢… ê²°ê³¼ í–‰ë ¬ ì¶œë ¥
     cout << "--------------------------" << endl;
     print_matrix("Result Matrix (A * B)", result_matrix);
 }
