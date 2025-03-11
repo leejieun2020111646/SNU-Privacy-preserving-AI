@@ -67,23 +67,23 @@ void evaluate_polynomial_18()
 
     print_vector(input, 3, 7);
 
-    // »ç¿ëÀÚ·ÎºÎÅÍ ´ÙÇ×½ÄÀÇ Â÷¼ö¸¦ ÀÔ·Â¹ŞÀ½
+    // ì‚¬ìš©ìë¡œë¶€í„° ë‹¤í•­ì‹ì˜ ì°¨ìˆ˜ë¥¼ ì…ë ¥ë°›ìŒ
 
     int degree;
 
-    cout << "¸î Â÷ ´ÙÇ×½ÄÀ» Æò°¡ÇÒ·¡?: ";
+    cout << "ëª‡ ì°¨ ë‹¤í•­ì‹ì„ í‰ê°€í• ë˜?: ";
 
     cin >> degree;
 
     if (degree < 1)
 
     {
-        cout << "Â÷¼ö´Â 1 ÀÌ»óÀÌ¾î¾ß ÇÕ´Ï´Ù." << endl;
+        cout << "ì°¨ìˆ˜ëŠ” 1 ì´ìƒì´ì–´ì•¼ í•©ë‹ˆë‹¤." << endl;
 
         return;
     }
 
-    // ¾ÏÈ£È­µÈ x^1ºÎÅÍ x^degree±îÁö ÀúÀåÇÒ º¤ÅÍ
+    // ì•”í˜¸í™”ëœ x^1ë¶€í„° x^degreeê¹Œì§€ ì €ì¥í•  ë²¡í„°
 
     vector<Ciphertext> x_encrypted(degree + 1);
 
@@ -91,22 +91,22 @@ void evaluate_polynomial_18()
 
     encoder.encode(input, scale, x_plain);
 
-    encryptor.encrypt(x_plain, x_encrypted[1]); // x^1 ¾ÏÈ£È­
+    encryptor.encrypt(x_plain, x_encrypted[1]); // x^1 ì•”í˜¸í™”
 
     cout << "x ok" << endl;
 
-    // x^2ºÎÅÍ x^degree±îÁö °è»ê
+    // x^2ë¶€í„° x^degreeê¹Œì§€ ê³„ì‚°
 
     for (int i = 2; i <= degree; i++)
 
     {
-        if (i % 2 == 0) // Â¦¼ö Â÷¼ö (Á¦°ö ¿¬»ê)
+        if (i % 2 == 0) // ì§ìˆ˜ ì°¨ìˆ˜ (ì œê³± ì—°ì‚°)
 
         {
             evaluator.square(x_encrypted[i / 2], x_encrypted[i]);
         }
 
-        else // È¦¼ö Â÷¼ö (°ö¼À ¿¬»ê)
+        else // í™€ìˆ˜ ì°¨ìˆ˜ (ê³±ì…ˆ ì—°ì‚°)
 
         {
             evaluator.mod_switch_to_inplace(x_encrypted[1], x_encrypted[i - 1].parms_id());
@@ -132,7 +132,7 @@ void evaluate_polynomial_18()
     encoder.decode(x_plain_result, reslt);
     print_vector(reslt, 3, 7);
 
-    // »ç¿ëÀÚ ÀÔ·Â °è¼ö ÀúÀå
+    // ì‚¬ìš©ì ì…ë ¥ ê³„ìˆ˜ ì €ì¥
 
     vector<Plaintext> plain_coeffs(degree + 1);
 
@@ -148,11 +148,11 @@ void evaluate_polynomial_18()
         encoder.encode(user_inputs[i], scale, plain_coeffs[i]);
     }
 
-    cout << "¼ıÀÚ °è¼ö Encoding completed." << endl;
+    cout << "ìˆ«ì ê³„ìˆ˜ Encoding completed." << endl;
     encoder.decode(plain_coeffs[0], reslt);
     print_vector(reslt, 3, 7);
 
-    // ·¹º§ ¸ÂÃß±â
+    // ë ˆë²¨ ë§ì¶”ê¸°
 
     parms_id_type last_parms_id = x_encrypted[degree].parms_id();
 
@@ -170,22 +170,22 @@ void evaluate_polynomial_18()
         plain_coeffs[i].scale() = pow(2.0, 40);
     }
 
-    cout << "-----------------------------< ·¹º§¸ÂÃß±â ok >-----------------------------" << endl;
+    cout << "-----------------------------< ë ˆë²¨ë§ì¶”ê¸° ok >-----------------------------" << endl;
 
-    // °è¼ö °öÇÏ±â///
+    // ê³„ìˆ˜ ê³±í•˜ê¸°///
 
     for (int i = 1; i <= degree; i++)
 
     {
         evaluator.multiply_plain_inplace(x_encrypted[i], plain_coeffs[i]);
-        // »õ·Î Ãß°¡ÇÑ ºÎºĞ. rescale ÀÌ ºüÁ®ÀÖ¾úÀ½. Å« ¼ıÀÚ°¡ ³ª¿Â ÀÌÀ¯°¡ ÀÌ°Í ¶§¹®ÀÎµí
+        // ìƒˆë¡œ ì¶”ê°€í•œ ë¶€ë¶„. rescale ì´ ë¹ ì ¸ìˆì—ˆìŒ. í° ìˆ«ìê°€ ë‚˜ì˜¨ ì´ìœ ê°€ ì´ê²ƒ ë•Œë¬¸ì¸ë“¯
         evaluator.rescale_to_next_inplace(x_encrypted[i]);
         x_encrypted[i].scale() = pow(2.0, 40);
     }
 
     cout << "Coefficients multiplied successfully." << endl;
 
-    // // µ¡¼À Àü¿¡ parms_id() ¸ÂÃß±â --> ÀÌ¹Ì ´Ù ¸ÂÃçÁ® ÀÖ¾î¼­ ÇÒ ÇÊ¿ä¾øÀ½
+    // // ë§ì…ˆ ì „ì— parms_id() ë§ì¶”ê¸° --> ì´ë¯¸ ë‹¤ ë§ì¶°ì ¸ ìˆì–´ì„œ í•  í•„ìš”ì—†ìŒ
 
     // for (int i = 1; i <= degree; i++)
 
@@ -195,10 +195,10 @@ void evaluate_polynomial_18()
 
     // }
 
-    // »õ·Î Ãß°¡ÇÑ ºÎºĞ. »ó¼öÇ×Àº ¾ÆÁ÷ ·¹º§ ¾È ¸ÂÃçÁ®ÀÖ¾î¼­ Ãß°¡ ÇßÀ½
+    // ìƒˆë¡œ ì¶”ê°€í•œ ë¶€ë¶„. ìƒìˆ˜í•­ì€ ì•„ì§ ë ˆë²¨ ì•ˆ ë§ì¶°ì ¸ìˆì–´ì„œ ì¶”ê°€ í–ˆìŒ
     evaluator.mod_switch_to_inplace(plain_coeffs[0], x_encrypted[1].parms_id());
 
-    // °á°ú ÇÕ»ê
+    // ê²°ê³¼ í•©ì‚°
 
     Ciphertext encrypted_result = x_encrypted[1];
 
@@ -210,9 +210,9 @@ void evaluate_polynomial_18()
 
     evaluator.add_plain_inplace(encrypted_result, plain_coeffs[0]);
 
-    cout << "-----------------------------< ´õÇÏ±â ok >-----------------------------" << endl;
+    cout << "-----------------------------< ë”í•˜ê¸° ok >-----------------------------" << endl;
 
-    // º¹È£È­ ¹× °á°ú Ãâ·Â
+    // ë³µí˜¸í™” ë° ê²°ê³¼ ì¶œë ¥
 
     Plaintext plain_result;
 
@@ -222,7 +222,7 @@ void evaluate_polynomial_18()
 
     encoder.decode(plain_result, result);
 
-    cout << "ÃÖÁ¾ °á°ú:" << endl;
+    cout << "ìµœì¢… ê²°ê³¼:" << endl;
 
     print_vector(result, 3, 7);
 }
