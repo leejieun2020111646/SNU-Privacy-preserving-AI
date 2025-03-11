@@ -166,7 +166,7 @@ void example_ckks_basics()
     cout << "Compute and rescale PI*x." << endl;
     Ciphertext x1_encrypted_coeff3;
     evaluator.multiply_plain(x1_encrypted, plain_coeff3, x1_encrypted_coeff3);
-    //¿Ö log2 ÇØÁÖ´Â°ÅÁö
+    //ì™œ log2 í•´ì£¼ëŠ”ê±°ì§€
     cout << "    + Scale of PI*x before rescale: " << log2(x1_encrypted_coeff3.scale()) << " bits" << endl;
     evaluator.rescale_to_next_inplace(x1_encrypted_coeff3);
     cout << "    + Scale of PI*x after rescale: " << log2(x1_encrypted_coeff3.scale()) << " bits" << endl;
@@ -293,14 +293,14 @@ void example_ckks_basics()
     print_line(__LINE__);
     cout << "Decrypt and decode PI*x^3 + 0.4x + 1." << endl;
     cout << "    + Expected result:" << endl;
-    //½ÇÁ¦ °è»ê ÇÏ¿© ±â´ë°ª µµÃâ!
+    //ì‹¤ì œ ê³„ì‚° í•˜ì—¬ ê¸°ëŒ€ê°’ ë„ì¶œ!
     vector<double> true_result;
     for (size_t i = 0; i < input.size(); i++)
     {
         double x = input[i];
         true_result.push_back((3.14159265 * x * x + 0.4) * x + 1);
     }
-    print_vector(true_result, 3, 7); //¼Ò¼öÁ¡ 3ÀÚ¸® Á¤¹Ðµµ·Î Ãâ·Â, Ã¹ 7°ª¸¸ Ãâ·Â
+    print_vector(true_result, 3, 7); //ì†Œìˆ˜ì  3ìžë¦¬ ì •ë°€ë„ë¡œ ì¶œë ¥, ì²« 7ê°’ë§Œ ì¶œë ¥
 
     /*
     Decrypt, decode, and print the result.
