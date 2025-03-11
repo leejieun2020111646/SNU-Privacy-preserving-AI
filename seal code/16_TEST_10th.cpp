@@ -83,7 +83,7 @@ void evaluate_polynomial_10th()
     cout << "[parms_id] x2_encrypted : " << context.get_context_data(x2_encrypted.parms_id())->chain_index() << endl;
 
     // 4------------------------------------------------------------------------------------------
-    evaluator.square(x2_encrypted, x4_encrypted); // ±×Àú 2Á¦°öÀÌ¹Ç·Î mod_switch ¾ÈÇÔ
+    evaluator.square(x2_encrypted, x4_encrypted); // ê·¸ì € 2ì œê³±ì´ë¯€ë¡œ mod_switch ì•ˆí•¨
     evaluator.relinearize_inplace(x4_encrypted, relin_keys);
     evaluator.rescale_to_next_inplace(x4_encrypted);
     cout << "-----------------------------< x4 ok >-----------------------------" << endl;
@@ -168,23 +168,23 @@ void evaluate_polynomial_10th()
 
     // Plaintext plain_coeff1;
     // encoder.encode(1.0, scale, plain_coeff1);
-    vector<Plaintext> plain_coeffs(11); // 11°³ÀÇ Plaintext ÀúÀåÇÒ º¤ÅÍ
-    vector<double> user_inputs(11); // »ç¿ëÀÚ ÀÔ·Â°ª ÀúÀå
+    vector<Plaintext> plain_coeffs(11); // 11ê°œì˜ Plaintext ì €ì¥í•  ë²¡í„°
+    vector<double> user_inputs(11); // ì‚¬ìš©ì ì…ë ¥ê°’ ì €ì¥
 
-    // »ç¿ëÀÚ ÀÔ·Â ¹Ş±â
+    // ì‚¬ìš©ì ì…ë ¥ ë°›ê¸°
     for (int i = 0; i < 11; i++)
     {
         cout << "Enter value for plain_coeff" << i << ": ";
         cin >> user_inputs[i];
     }
 
-    // ÀÔ·ÂµÈ °ªÀ» ÀÎÄÚµùÇÏ¿© Plaintext¿¡ ÀúÀå
+    // ì…ë ¥ëœ ê°’ì„ ì¸ì½”ë”©í•˜ì—¬ Plaintextì— ì €ì¥
     for (int i = 0; i < 11; i++)
     {
         encoder.encode(user_inputs[i], scale, plain_coeffs[i]);
     }
 
-    cout << "¼ıÀÚ °è¼ö Encoding completed." << endl;
+    cout << "ìˆ«ì ê³„ìˆ˜ Encoding completed." << endl;
 
     parms_id_type last_parms_id = x10_encrypted.parms_id();
     evaluator.mod_switch_to_inplace(x_encrypted, last_parms_id);
@@ -201,9 +201,9 @@ void evaluate_polynomial_10th()
     for (int i = 0; i < 11; i++)
     {
         evaluator.mod_switch_to_inplace(plain_coeffs[i], last_parms_id);
-        cout << "°è¼ö [parms_id] " << context.get_context_data(plain_coeffs[i].parms_id())->chain_index() << endl;
+        cout << "ê³„ìˆ˜ [parms_id] " << context.get_context_data(plain_coeffs[i].parms_id())->chain_index() << endl;
     }
-    cout << "-----------------------------< ·¹º§¸ÂÃß±â ok >-----------------------------" << endl;
+    cout << "-----------------------------< ë ˆë²¨ë§ì¶”ê¸° ok >-----------------------------" << endl;
 
     cout << "[parms_id] " << context.get_context_data(x_encrypted.parms_id())->chain_index() << endl;
     cout << "[parms_id] " << context.get_context_data(x2_encrypted.parms_id())->chain_index() << endl;
@@ -243,7 +243,7 @@ void evaluate_polynomial_10th()
     evaluator.multiply_plain_inplace(x8_encrypted, plain_coeffs[8]);
     evaluator.multiply_plain_inplace(x9_encrypted, plain_coeffs[9]);
     evaluator.multiply_plain_inplace(x10_encrypted, plain_coeffs[10]);
-    cout << "plain_coeffs[1] °öÇÑ°Å Àß µÇ±ä ÇÔ" << endl;
+    cout << "plain_coeffs[1] ê³±í•œê±° ì˜ ë˜ê¸´ í•¨" << endl;
     cout << "[x parms_id] " << context.get_context_data(x_encrypted.parms_id())->chain_index() << endl;
     cout << "[Scale] x_encrypted : " << log2(x_encrypted.scale()) << " bits" << endl;
     cout << "[Scale] x2_encrypted : " << log2(x2_encrypted.scale()) << " bits" << endl;
@@ -272,7 +272,7 @@ void evaluate_polynomial_10th()
     evaluator.add_inplace(encrypted_result, x9_encrypted);
     evaluator.add_inplace(encrypted_result, x10_encrypted);
     evaluator.add_plain_inplace(encrypted_result, plain_coeffs[0]);
-    cout << "-----------------------------< ´õÇÏ±â ok >-----------------------------" << endl;
+    cout << "-----------------------------< ë”í•˜ê¸° ok >-----------------------------" << endl;
 
     Plaintext plain_result;
     decryptor.decrypt(encrypted_result, plain_result);
