@@ -7,7 +7,7 @@ using namespace std;
 
 void example_to_test()
 {
-    // ¾ÏÈ£È­ ÆÄ¶ó¹ÌÅÍ ¼³Á¤
+    // ì•”í˜¸í™” íŒŒë¼ë¯¸í„° ì„¤ì •
     EncryptionParameters parms(scheme_type::ckks);
     size_t poly_modulus_degree = 8192;
     parms.set_poly_modulus_degree(poly_modulus_degree);
@@ -35,14 +35,14 @@ void example_to_test()
 
     double scale = pow(2.0, 40);
 
-    // µÎ ½Ç¼ö ÀÔ·Â¹Ş±â
+    // ë‘ ì‹¤ìˆ˜ ì…ë ¥ë°›ê¸°
     double num1, num2;
     cout << "Enter the first number: ";
     cin >> num1;
     cout << "Enter the second number: ";
     cin >> num2;
 
-    // ÀÔ·Â°ª ÀÎÄÚµù ¹× ¾ÏÈ£È­
+    // ì…ë ¥ê°’ ì¸ì½”ë”© ë° ì•”í˜¸í™”
     Plaintext plain_num1, plain_num2;
     encoder.encode(num1, scale, plain_num1);
     encoder.encode(num2, scale, plain_num2);
@@ -51,17 +51,17 @@ void example_to_test()
     encryptor.encrypt(plain_num1, encrypted_num1);
     encryptor.encrypt(plain_num2, encrypted_num2);
 
-    // µ¡¼À ¿¬»ê
+    // ë§ì…ˆ ì—°ì‚°
     Ciphertext encrypted_sum;
     evaluator.add(encrypted_num1, encrypted_num2, encrypted_sum);
 
-    // °ö¼À ¿¬»ê
+    // ê³±ì…ˆ ì—°ì‚°
     Ciphertext encrypted_product;
     evaluator.multiply(encrypted_num1, encrypted_num2, encrypted_product);
     evaluator.relinearize_inplace(encrypted_product, relin_keys);
     evaluator.rescale_to_next_inplace(encrypted_product);
 
-    // º¹È£È­ ¹× °á°ú È®ÀÎ
+    // ë³µí˜¸í™” ë° ê²°ê³¼ í™•ì¸
     Plaintext plain_sum, plain_product;
     decryptor.decrypt(encrypted_sum, plain_sum);
     decryptor.decrypt(encrypted_product, plain_product);
@@ -70,28 +70,28 @@ void example_to_test()
     encoder.decode(plain_sum, decoded_sum);
     encoder.decode(plain_product, decoded_product);
 
-    // °è»êµÈ °á°ú
+    // ê³„ì‚°ëœ ê²°ê³¼
     double result_sum = decoded_sum[0];
     double result_product = decoded_product[0];
 
-    // ½ÇÁ¦ °á°ú
+    // ì‹¤ì œ ê²°ê³¼
     double expected_sum = num1 + num2;
     double expected_product = num1 * num2;
 
-    // ¿ÀÂ÷ °è»ê
+    // ì˜¤ì°¨ ê³„ì‚°
     double absolute_error_sum = fabs(result_sum - expected_sum);
     double absolute_error_product = fabs(result_product - expected_product);
 
-    // °á°ú Ãâ·Â
+    // ê²°ê³¼ ì¶œë ¥
     cout << fixed << setprecision(20);
-    cout << "\n°á°ú:" << endl;
+    cout << "\nê²°ê³¼:" << endl;
     cout << "Addition:" << endl;
-    cout << "  µ¡¼À º¹È£È­ °á°ú: " << result_sum << endl;
-    cout << "  ¿ø·¡ °á°ú: " << expected_sum << endl;
-    cout << "  ¿ÀÂ÷: " << absolute_error_sum << endl;
+    cout << "  ë§ì…ˆ ë³µí˜¸í™” ê²°ê³¼: " << result_sum << endl;
+    cout << "  ì›ë˜ ê²°ê³¼: " << expected_sum << endl;
+    cout << "  ì˜¤ì°¨: " << absolute_error_sum << endl;
 
     cout << "\nMultiplication:" << endl;
-    cout << "  °ö¼À º¹È£È­ °á°ú: " << result_product << endl;
-    cout << "  ¿ø·¡ °á°ú: " << expected_product << endl;
-    cout << "  ¿ÀÂ÷: " << absolute_error_product << endl;
+    cout << "  ê³±ì…ˆ ë³µí˜¸í™” ê²°ê³¼: " << result_product << endl;
+    cout << "  ì›ë˜ ê²°ê³¼: " << expected_product << endl;
+    cout << "  ì˜¤ì°¨: " << absolute_error_product << endl;
 }
